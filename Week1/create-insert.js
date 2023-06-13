@@ -6,27 +6,25 @@ const connection = mysql.createConnection({
   password: 'hyfpassword',
 });
 
-
 connection.connect((err) => {
   if (err) throw err;
   console.log('Connected to the MySQL server');
-
 
   const createDatabase = `CREATE DATABASE IF NOT EXISTS meetup`;
   connection.query(createDatabase, (err) => {
     if (err) throw err;
     console.log('Database "meetup" created');
 
- 
     connection.query('USE meetup', (err) => {
       if (err) throw err;
 
-    
       const createInviteeTable = `CREATE TABLE IF NOT EXISTS Invitee (
         invitee_no INT PRIMARY KEY AUTO_INCREMENT,
         invitee_name VARCHAR(50),
-        invited_by VARCHAR(50)
+        invited_by INT,
+        FOREIGN KEY (invited_by) REFERENCES Invitee (invitee_no)
       )`;
+      
       connection.query(createInviteeTable, (err) => {
         if (err) throw err;
         console.log('Invitee table created');
@@ -40,7 +38,6 @@ connection.connect((err) => {
           if (err) throw err;
           console.log('Room table created');
 
-       
           const createMeetingTable = `CREATE TABLE IF NOT EXISTS Meeting (
             meeting_no INT PRIMARY KEY AUTO_INCREMENT,
             meeting_title VARCHAR(50),
@@ -53,22 +50,19 @@ connection.connect((err) => {
             if (err) throw err;
             console.log('Meeting table created');
 
-           
             const insertData = async () => {
               try {
-               
                 const insertInvitees = `INSERT INTO Invitee (invitee_name, invited_by) VALUES ?`;
                 const inviteeValues = [
-                  ['Iron Man', 'Captain America'],
-                  ['Natasha Romanoff', 'Bob Ross'],
-                  ['Wanda Maximoff', 'Thor odinson'],
-                  ['Black Panther', 'Winter Soilder'],
-                  ['Stan Lee', 'Magneto'],
-                ];
+                    ['Iron Man', 1],
+                    ['Natasha Romanoff', 2],
+                    ['Wanda Maximoff', 3],
+                    ['Black Panther', 4],
+                    ['Stan Lee', 5],
+                  ];
                 await connection.query(insertInvitees, [inviteeValues]);
                 console.log('Data inserted into Invitee table');
 
-               
                 const insertRooms = `INSERT INTO Room (room_name, floor_number) VALUES ?`;
                 const roomValues = [
                   ['Conference Room A', 1],
@@ -80,24 +74,13 @@ connection.connect((err) => {
                 await connection.query(insertRooms, [roomValues]);
                 console.log('Data inserted into Room table');
 
-               
-                const insertMeetings = `INSERT INTO Meeting (meeting_title, starting_time, ending_time, room_no) VALUES ?`;
-                const meetingValues = [
-                  ['Project Kickoff', '2023-06-13 09:00:00', '2023-06-13 10:30:00', 1],
-                  ['Team Stand-up', '2023-06-14 10:00:00', '2023-06-14 10:30:00', 2],
-                  ['Client Meeting', '2023-06-16 10:00:00', '2023-06-16 11:30:00', 5],
-                  ['Training Session', '2023-06-17 09:30:00', '2023-06-17 11:00:00', 4],
-                ];
-                await connection.query(insertMeetings, [meetingValues]);
-                console.log('Data inserted into Meeting table');
-
-                connection.end(); 
+                connection.end();
               } catch (err) {
                 throw err;
               }
             };
 
-            insertData(); 
+            insertData();
           });
         });
       });
