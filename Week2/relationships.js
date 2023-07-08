@@ -9,11 +9,7 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-const dropTableQuery = `DROP TABLE IF EXISTS research_papers`;
 
-connection.query(dropTableQuery, (err, results) => {
-  if (err) throw err;
-  console.log('Table research_papers dropped successfully!');
 
   const createTableQuery = `
     CREATE TABLE research_papers (
@@ -32,23 +28,23 @@ connection.query(dropTableQuery, (err, results) => {
 
 
 const insertAuthorsQuery = `
-  INSERT INTO authors (author_name, university, date_of_birth, h_index, gender)
+  INSERT INTO authors (author_name, university, date_of_birth, h_index, gender, mentor)
   VALUES
-    ('Douglas Adams', 'University of Cambridge', '1940-05-01', 10, 'male'),
-    ('Dante Alighieri', 'Harvard University ', '1999-07-02', 12, 'male'),
-    ('Chimamanda Ngozi Adichie', 'University of Oxford ', '2001-06-02', 12, 'female'),
-    ('Monica Ali', 'University of Oxford ', '1991-09-02', 12, 'female'),
-    ('Philip Ardagh', 'UCL (University College London)  ', '1995-08-02', 12, 'male'),
-    ('Maya Angelou', 'University of Chicago ', '1989-02-02', 12, 'female'),
-    ('Isaac Asimov', 'University of Pennsylvania ', '1891-02-02', 12, 'male'),
-    ('Margaret Atwood', 'University of Pennsylvania', '1982-02-02', 12, 'female'),
-    ('Paul Auster', 'Princeton University ', '1996-10-02', 12, 'male'),
-    ('Jane Austen', 'Yale University ', '1895-11-02', 12, 'female'),
-    ('James Baldwin', 'Cornell University ', '1971-02-02', 12, 'male'),
-    ('Agatha Christie', 'Johns Hopkins University ', '1988-03-02', 12, 'female'),
-    ('Tom Clancy', 'University of California, Berkeley', '2005-12-02', 12, 'male'),
-    ('Emily Dickinson', 'Australian National University ', '1998-01-02', 12, 'female'),
-    ('Andrea Levy', 'Northwestern University ', '1973-02-02', 12, 'female')
+    ('Douglas Adams', 'University of Cambridge', '1940-05-01', 10, 'male','Damon Howell'),
+    ('Dante Alighieri', 'Harvard University ', '1999-07-02', 12, 'male', 'Kolton Pearson'),
+    ('Chimamanda Ngozi Adichie', 'University of Oxford ', '2001-06-02', 12, 'female','Damon Howell'),
+    ('Monica Ali', 'University of Oxford ', '1991-09-02', 12, 'female','Damon Howell'),
+    ('Philip Ardagh', 'UCL (University College London)  ', '1995-08-02', 12, 'male','Damon Howell'),
+    ('Maya Angelou', 'University of Chicago ', '1989-02-02', 12, 'female','Damon Howell'),
+    ('Isaac Asimov', 'University of Pennsylvania ', '1891-02-02', 12, 'male','Damon Howell'),
+    ('Margaret Atwood', 'University of Pennsylvania', '1982-02-02', 12, 'female','Kolton Pearson'),
+    ('Paul Auster', 'Princeton University ', '1996-10-02', 12, 'male','Damon Howell'),
+    ('Jane Austen', 'Yale University ', '1895-11-02', 12, 'female','Damon Howell'),
+    ('James Baldwin', 'Cornell University ', '1971-02-02', 12, 'male','Damon Howell'),
+    ('Agatha Christie', 'Johns Hopkins University ', '1988-03-02', 12, 'female','Kolton Pearson'),
+    ('Tom Clancy', 'University of California, Berkeley', '2005-12-02', 12, 'male','Damon Howell'),
+    ('Emily Dickinson', 'Australian National University ', '1998-01-02', 12, 'female','Damon Howell'),
+    ('Andrea Levy', 'Northwestern University ', '1973-02-02', 12, 'female','Kolton Pearson')
 `;
 
 connection.query(insertAuthorsQuery, (err, results) => {
@@ -99,6 +95,6 @@ connection.query(insertResearchPapersQuery, (err, results) => {
 });
 });
 });
-});
+
 
 

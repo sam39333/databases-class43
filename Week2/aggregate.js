@@ -25,7 +25,7 @@ connection.query(query1, (err, results) => {
 
 
 const query2 = `
-SELECT SUM(research_papers.paper_id) AS total_papers
+SELECT COUNT(research_papers.paper_id) AS total_papers
 FROM research_papers
 JOIN authors ON research_papers.author_id = authors.author_id
 WHERE authors.gender = 'female';
