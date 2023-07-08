@@ -1,50 +1,45 @@
-const { MongoClient } = require('mongodb');
+const mysql = require('mysql');
 
-async function insertSampleData() {
-  const uri = 'mongodb+srv://sam:AqjJ284OtX8gW2hm@cluster0.qbzjczy.mongodb.net/?retryWrites=true&w=majority';
-  const client = new MongoClient(uri);
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'hyfuser',
+  password: 'hyfpassword',
+  database: 'account',
+  port: 3306
+});
 
-  try {
-    await client.connect();
+connection.connect();
 
-    const db = client.db('sam');
-    const accountCollection = db.collection('account');
-    
-    await accountCollection.insertMany([
-      { account_number: 101, balance: 1000 },
-      { account_number: 102, balance: 2000 },
-      { account_number: 103, balance: 5000 },
-    ]);
+const insertAccountData = `
+  INSERT INTO account (account_number, balance)
+  VALUES
+    (101, 1000),
+    (102, 2000),
+    (103, 5000);
+`;
 
- 
-    const accountChangesCollection = db.collection('account_changes');
-    await accountChangesCollection.insertMany([
-      {
-        account_number: 1,
-        amount: 1000,
-        changed_date: new Date(),
-        remark: 'Initial deposit',
-      },
-      {
-        account_number: 2,
-        amount: -500,
-        changed_date: new Date(),
-        remark: 'Withdrawal',
-      },
-      {
-        account_number: 3,
-        amount: 2000,
-        changed_date: new Date(),
-        remark: 'Transfer received',
-      },
-    ]);
+const insertAccountChangesData = `
+  INSERT INTO account_changes (account_number, amount, changed_date, remark)
+  VALUES
+    (1, 1000, NOW(), 'Initial deposit'),
+    (2, -500, NOW(), 'Withdrawal'),
+    (3, 2000, NOW(), 'Transfer received');
+`;
 
-    console.log('Sample data inserted successfully!');
-  } catch (error) {
-    console.error('Error inserting sample data:', error);
-  } finally {
-    await client.close();
+connection.query(insertAccountData, (error) => {
+  if (error) {
+    console.error('Error inserting account data:', error);
+    connection.end();
+    return;
   }
-}
 
-insertSampleData();
+  connection.query(insertAccountChangesData, (error) => {
+    if (error) {
+      console.error('Error inserting account_changes data:', error);
+    } else {
+      console.log('data inserted successfully!');
+    }
+
+    connection.end();
+  });
+});

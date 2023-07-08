@@ -1,23 +1,63 @@
-const { MongoClient } = require('mongodb');
+const mysql = require('mysql');
 
-async function main() {
-  const uri = 'mongodb+srv://sam:AqjJ284OtX8gW2hm@cluster0.qbzjczy.mongodb.net/?retryWrites=true&w=majority';
-  const client = new MongoClient(uri);
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'hyfuser',
+  password: 'hyfpassword',
+  port: 3306
+});
 
-  try {
-    await client.connect();
+connection.connect();
 
-    const db = client.db('sam');
-    await db.createCollection('account');
-    await db.createCollection('account_changes');
+const createDatabase = 'CREATE DATABASE IF NOT EXISTS account;';
+const useDatabase = 'USE account;';
 
-    console.log('Collections created successfully!');
-  } catch (error) {
-    console.error('Error creating collections:', error);
-  } finally {
-    await client.close();
+const createAccountTable = `
+  CREATE TABLE account (
+    account_number INT,
+    balance INT
+  );
+`;
+
+const createAccountChangesTable = `
+  CREATE TABLE account_changes (
+    account_number INT,
+    amount INT,
+    changed_date DATETIME,
+    remark VARCHAR(255)
+  );
+`;
+
+connection.query(createDatabase, (error) => {
+  if (error) {
+    console.error('Error creating account database:', error);
+    connection.end();
+    return;
   }
-}
 
-main();
+  connection.query(useDatabase, (error) => {
+    if (error) {
+      console.error('Error using account database:', error);
+      connection.end();
+      return;
+    }
 
+    connection.query(createAccountTable, (error) => {
+      if (error) {
+        console.error('Error creating account table:', error);
+        connection.end();
+        return;
+      }
+
+      connection.query(createAccountChangesTable, (error) => {
+        if (error) {
+          console.error('Error creating account_changes table:', error);
+        } else {
+          console.log('Tables created successfully!');
+        }
+
+        connection.end();
+      });
+    });
+  });
+});
