@@ -64,6 +64,8 @@ const getContinentInfoByYearAndAge = async (year, age) => {
       $match: {
         Year: year,
         Age: age,
+        Country: { $in: ["Asia", "Europe", "Africa", "North America", "South America", "Oceania"] }
+
       },
     },
     {
